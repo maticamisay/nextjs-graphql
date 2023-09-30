@@ -1,27 +1,15 @@
-import Image from "next/image";
 import { gql } from "@apollo/client";
 import { getClient } from "@/lib/client";
-import TodoForm from "@/components/FormTodo";
-import TodoList from "@/components/TodoList";
-
-const userQuery = gql`
-  query {
-    todos {
-      title
-      completed
-      userId {
-        name
-      }
-    }
-  }
-`;
+import TodoForm from "@/components/todos/FormTodo";
+import TodoList from "@/components/todos/TodoList";
+import { GET_TODOS } from "@/graphql/queries/todos";
 
 export default async function Home() {
-  const { data } = await getClient().query({ query: userQuery });
+  const { data } = await getClient().query({ query: GET_TODOS });
 
   return (
     <main>
-      <TodoForm />
+      <TodoForm users={data.users} />
       <TodoList todos={data.todos} />
     </main>
   );
