@@ -1,4 +1,3 @@
-import { gql } from "@apollo/client";
 import { getClient } from "@/lib/client";
 import TodoForm from "@/components/todos/FormTodo";
 import TodoList from "@/components/todos/TodoList";
@@ -8,9 +7,9 @@ export default async function Home() {
   const { data } = await getClient().query({ query: GET_TODOS });
 
   return (
-    <main>
+    <>
       <TodoForm users={data.users} />
       <TodoList todos={data.todos} />
-    </main>
+    </>
   );
 }

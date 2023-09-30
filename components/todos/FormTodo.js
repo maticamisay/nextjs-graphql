@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 function TodoForm({ users = [] }) {
   const [title, setTitle] = useState("");
   const [selectedUser, setSelectedUser] = useState("");
-  const { todo, setTodo, clearTodo } = useEditTodo();
+  const { todo, clearTodo } = useEditTodo();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,15 +24,12 @@ function TodoForm({ users = [] }) {
           "Content-Type": "application/json",
         },
       });
-      const data = await res.json();
       todo && clearTodo();
       setTitle("");
       setSelectedUser("");
       revalidatePathServer("/");
       if (!res.ok) {
-        toast.error(`Error al ${todo ? "actualizar" : "crear"} el todo`);
-        console.log(data);
-        return;
+        throw new Error(`Error al ${todo ? "actualizar" : "crear"} el todo`);
       }
       toast.success(`Todo ${todo ? "actualizado" : "creado"} correctamente`);
     } catch (error) {
