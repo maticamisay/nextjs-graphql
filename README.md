@@ -44,5 +44,3 @@ La aplicación se centra en gestionar y visualizar "Todos" (tareas) y usuarios. 
 
 - **Segmentos de Ruta**: Cada carpeta en una ruta representa un segmento de ruta que se mapea a un segmento correspondiente en una URL.
 - **Convenciones de Archivos**: Next.js 13 viene con una serie de archivos especiales que sirven propósitos específicos, como `layout`, `page`, `loading`, `not-found`, `error`, entre otros.
-
-[Enlace a mi portfolio](#) (Añade aquí el enlace a tu portafolio).
