@@ -5,7 +5,13 @@ import { useSelectedLayoutSegment } from "next/navigation";
 
 function TabsWrapper({ children }) {
   const urlSegment = useSelectedLayoutSegment();
-  const activeTab = urlSegment === "usuarios" ? "usuarios" : "inicio";
+
+  const activeTab =
+    urlSegment === "usuarios"
+      ? "usuarios"
+      : urlSegment === null
+      ? null
+      : "__DEFAULT__";
   return (
     <div className="bg-gray-100 p-4">
       <ul className="flex border-b">
@@ -30,7 +36,9 @@ function TabsWrapper({ children }) {
           </Link>
         </li>
       </ul>
-      <div className="bg-white p-4 mt-4 rounded shadow-md">{children}</div>
+      <div className="bg-white p-4 mt-4 rounded shadow-md min-h-[400px] sm:min-h-[600px] md:min-h-[800px]">
+        {children}
+      </div>
     </div>
   );
 }

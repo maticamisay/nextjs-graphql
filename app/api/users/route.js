@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import { getClient } from "@/lib/client";
-import { CREATE_USER } from "@/graphql/mutations/users";
+import { CREATE_USER, DELETE_USER } from "@/graphql/mutations/users";
 
 export async function POST(request) {
   try {
     const newUser = await request.json();
-
     const client = getClient();
     const res = await client.mutate({
       mutation: CREATE_USER,
@@ -22,21 +21,21 @@ export async function POST(request) {
   }
 }
 
-// export async function DELETE(request) {
-//   try {
-//     const todo = await request.json();
-//     const client = getClient();
-//     const res = await client.mutate({
-//       mutation: DELETE_TODO,
-//       variables: {
-//         id: todo.id,
-//       },
-//     });
-//     const deleteTodo = res.data.deleteTodo;
-//     return NextResponse.json({
-//       deleteTodo,
-//     });
-//   } catch (error) {
-//     return NextResponse.json(error);
-//   }
-// }
+export async function DELETE(request) {
+  try {
+    const user = await request.json();
+    const client = getClient();
+    const res = await client.mutate({
+      mutation: DELETE_USER,
+      variables: {
+        id: user.id,
+      },
+    });
+    const deleteUser = res.data.deleteUser;
+    return NextResponse.json({
+      deleteUser,
+    });
+  } catch (error) {
+    return NextResponse.json(error);
+  }
+}
