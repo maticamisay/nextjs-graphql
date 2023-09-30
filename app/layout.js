@@ -2,6 +2,8 @@ import Navbar from "@/components/ui/Navbar";
 import "./globals.css";
 import Footer from "@/components/ui/Footer";
 import Container from "@/components/ui/Container";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const metadata = {
   title: "Create Next App",
@@ -13,6 +15,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={"bg-gray-100 font-sans leading-normal tracking-normal"}>
         <Navbar />
+        <ToastContainer />
         <Container>{children}</Container>
         <Footer />
       </body>

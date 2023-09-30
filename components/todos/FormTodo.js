@@ -2,6 +2,7 @@
 import { revalidatePathServer } from "@/app/actions";
 import useEditTodo from "@/store/useEditTodo";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 function TodoForm({ users = [] }) {
   const [title, setTitle] = useState("");
@@ -10,14 +11,8 @@ function TodoForm({ users = [] }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (title.trim() !== "") {
-      console.log({
-        id: todo ? todo.id : null,
-        title,
-        userId: todo ? todo.userId : selectedUser,
-        completed: false,
-      });
-      await fetch("/api/todos", {
+    try {
+      const res = await fetch("/api/todos", {
         method: todo ? "PUT" : "POST",
         body: JSON.stringify({
           id: todo ? todo.id : null,
@@ -29,10 +24,20 @@ function TodoForm({ users = [] }) {
           "Content-Type": "application/json",
         },
       });
+      const data = await res.json();
       todo && clearTodo();
       setTitle("");
       setSelectedUser("");
       revalidatePathServer("/");
+      if (!res.ok) {
+        toast.error(`Error al ${todo ? "actualizar" : "crear"} el todo`);
+        console.log(data);
+        return;
+      }
+      toast.success(`Todo ${todo ? "actualizado" : "creado"} correctamente`);
+    } catch (error) {
+      console.log(error);
+      toast.error(`Error al ${todo ? "actualizar" : "crear"} el todo`);
     }
   };
 
@@ -76,7 +81,8 @@ function TodoForm({ users = [] }) {
         </select>
         <button
           type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white p-2 px-4 transition duration-300 ease-in-out"
+          className="bg-blue-600 hover:bg-blue-700 text-white p-2 px-4 transition duration-300 ease-in-out disabled:opacity-50"
+          disabled={title.trim() === "" || selectedUser === ""}
         >
           {todo ? "Actualizar" : "Crear"}
         </button>
