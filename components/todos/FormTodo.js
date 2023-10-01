@@ -1,12 +1,11 @@
 "use client";
-import { revalidatePathServer } from "@/app/actions";
+import { getToken, revalidatePathServer } from "@/app/actions";
 import useEditTodo from "@/store/useEditTodo";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
-function TodoForm({ users = [] }) {
+function TodoForm() {
   const [title, setTitle] = useState("");
-  const [selectedUser, setSelectedUser] = useState("");
   const { todo, clearTodo } = useEditTodo();
 
   const handleSubmit = async (e) => {
@@ -17,19 +16,18 @@ function TodoForm({ users = [] }) {
         body: JSON.stringify({
           id: todo ? todo.id : null,
           title,
-          userId: selectedUser,
           completed: false,
         }),
         headers: {
           "Content-Type": "application/json",
         },
       });
+      const data = await res.json();
       todo && clearTodo();
       setTitle("");
-      setSelectedUser("");
       revalidatePathServer("/");
       if (!res.ok) {
-        throw new Error(`Error al ${todo ? "actualizar" : "crear"} el todo`);
+        throw new Error(data.error);
       }
       toast.success(`Todo ${todo ? "actualizado" : "creado"} correctamente`);
     } catch (error) {
@@ -39,14 +37,12 @@ function TodoForm({ users = [] }) {
   };
 
   useEffect(() => {
-    console.log(todo);
     if (todo) {
       setTitle(todo.title);
-      setSelectedUser(todo.userId);
     } else {
       setTitle("");
-      setSelectedUser("");
     }
+    getToken().then((token) => console.log(token));
   }, [todo]);
   return (
     <div className="mb-4 px-4 sm:px-0">
@@ -62,24 +58,10 @@ function TodoForm({ users = [] }) {
           placeholder="Añade un nuevo todo"
           className="flex-grow p-3 w-full sm:w-auto outline-none border-b sm:border-b-0 sm:border-r"
         />
-        <select
-          value={selectedUser}
-          onChange={(e) => setSelectedUser(e.target.value)}
-          className="p-3 w-full sm:w-auto border-b sm:border-b-0 sm:border-r"
-        >
-          <option value="" disabled>
-            Selecciona un usuario
-          </option>
-          {users.map((user) => (
-            <option key={user.id} value={user.id}>
-              {user.name}
-            </option>
-          ))}
-        </select>
         <button
           type="submit"
           className="mt-2 w-full sm:w-auto sm:mt-0 bg-blue-600 hover:bg-blue-700 text-white p-3 px-4 transition duration-300 ease-in-out disabled:opacity-50"
-          disabled={title.trim() === "" || selectedUser === ""}
+          disabled={title.trim() === ""}
         >
           {todo ? "Actualizar" : "Crear"}
         </button>

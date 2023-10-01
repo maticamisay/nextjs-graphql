@@ -17,3 +17,11 @@ export const DELETE_USER = gql`
     }
   }
 `;
+
+export const LOGIN_USER = gql`
+  mutation LoginUser($name: String!, $password: String!) {
+    login(name: $name, password: $password) {
+      accessToken
+    }
+  }
+`;

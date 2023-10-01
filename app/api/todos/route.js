@@ -16,6 +16,8 @@ export async function GET() {
 export async function POST(request) {
   try {
     const newTodo = await request.json();
+    const token =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTE3NTg5MTYxMzRhOWM3ZWQzZGJiYzgiLCJuYW1lIjoibWF0aSIsImlhdCI6MTY5NjE3Mjg3MiwiZXhwIjoxNjk2MTc2NDcyfQ.EIChRwp4ceVmy-TDixvvlpLVkcH29TvaK9bT6A7h8vE";
 
     const client = getClient();
     const res = await client.mutate({
@@ -23,7 +25,9 @@ export async function POST(request) {
       variables: {
         title: newTodo.title,
         completed: newTodo.completed,
-        userId: newTodo.userId,
+      },
+      context: {
+        token: token,
       },
     });
     const createTodo = res.data.createTodo;
@@ -31,7 +35,10 @@ export async function POST(request) {
       todo: createTodo,
     });
   } catch (error) {
-    return NextResponse.json(error);
+    return NextResponse.json(
+      { error: error.message },
+      { status: error.networkError?.statusCode || 500 }
+    );
   }
 }
 

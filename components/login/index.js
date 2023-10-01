@@ -2,12 +2,30 @@
 import React, { useState } from "react";
 
 const LoginComponent = () => {
-  const [email, setEmail] = useState("");
+  const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("Iniciar sesión con:", email, password);
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        body: JSON.stringify({
+          name: user,
+          password,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error);
+      }
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -23,14 +41,14 @@ const LoginComponent = () => {
           <div className="rounded-md shadow-sm">
             <div>
               <input
-                aria-label="Email address"
-                name="email"
-                type="email"
+                aria-label="User"
+                name="user"
+                type="user"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={user}
+                onChange={(e) => setUser(e.target.value)}
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
-                placeholder="Email address"
+                placeholder="Username"
               />
             </div>
             <div className="-mt-px">

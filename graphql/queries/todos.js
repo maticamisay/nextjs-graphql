@@ -11,9 +11,5 @@ export const GET_TODOS = gql`
         name
       }
     }
-    users {
-      id
-      name
-    }
   }
 `;
