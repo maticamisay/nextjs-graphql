@@ -10,8 +10,9 @@ function TabsWrapper({ children }) {
     urlSegment === "usuarios"
       ? "usuarios"
       : urlSegment === null
-      ? null
+      ? "inicio"
       : "__DEFAULT__";
+  if (urlSegment === "login") return children;
   return (
     <div className="bg-gray-100 p-4">
       <ul className="flex border-b">

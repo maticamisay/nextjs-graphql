@@ -49,23 +49,23 @@ function TodoForm({ users = [] }) {
     }
   }, [todo]);
   return (
-    <div className="mb-4">
-      <h2 className="text-xl font-bold mb-3">Crear Todo</h2>
+    <div className="mb-4 px-4 sm:px-0">
+      <h2 className="text-xl sm:text-2xl font-bold mb-5">Crear Todo</h2>
       <form
         onSubmit={handleSubmit}
-        className="flex items-center border rounded shadow-sm overflow-hidden"
+        className="flex flex-col sm:flex-row items-start sm:items-center border rounded shadow-sm"
       >
         <input
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Añade un nuevo todo"
-          className="flex-grow p-2 outline-none"
+          className="flex-grow p-3 w-full sm:w-auto outline-none border-b sm:border-b-0 sm:border-r"
         />
         <select
           value={selectedUser}
           onChange={(e) => setSelectedUser(e.target.value)}
-          className="p-2 border-l"
+          className="p-3 w-full sm:w-auto border-b sm:border-b-0 sm:border-r"
         >
           <option value="" disabled>
             Selecciona un usuario
@@ -78,7 +78,7 @@ function TodoForm({ users = [] }) {
         </select>
         <button
           type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white p-2 px-4 transition duration-300 ease-in-out disabled:opacity-50"
+          className="mt-2 w-full sm:w-auto sm:mt-0 bg-blue-600 hover:bg-blue-700 text-white p-3 px-4 transition duration-300 ease-in-out disabled:opacity-50"
           disabled={title.trim() === "" || selectedUser === ""}
         >
           {todo ? "Actualizar" : "Crear"}
