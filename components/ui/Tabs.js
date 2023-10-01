@@ -36,6 +36,16 @@ function TabsWrapper({ children }) {
             Usuarios
           </Link>
         </li>
+        <li className="-mb-px mr-2">
+          <Link
+            href="/tipofday"
+            className={`py-2 px-4 inline-block ${
+              activeTab === "tipofday" ? "border-b-2 border-blue-500" : ""
+            }`}
+          >
+            Consejo del día
+          </Link>
+        </li>
       </ul>
       <div className="bg-white p-4 mt-4 rounded shadow-md min-h-[400px] sm:min-h-[600px] md:min-h-[800px]">
         {children}

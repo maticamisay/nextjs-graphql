@@ -1,5 +1,6 @@
 import Link from "next/link";
 import React from "react";
+import NavbarSession from "../session";
 
 const Navbar = () => {
   return (
@@ -15,12 +16,7 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center">
-          <Link
-            href="/login"
-            className="text-white no-underline hover:underline hover:text-gray-200 ml-4"
-          >
-            Iniciar sesión
-          </Link>
+          <NavbarSession />
         </div>
       </div>
     </nav>

@@ -16,6 +16,8 @@ export async function POST(request) {
     const loginToken = res.data.login;
     return NextResponse.json({
       token: loginToken.accessToken,
+      name: loginToken.name,
+      role: loginToken.role,
     });
   } catch (error) {
     return NextResponse.json(error);

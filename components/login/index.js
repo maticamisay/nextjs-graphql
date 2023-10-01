@@ -1,17 +1,21 @@
 "use client";
+import useUser from "@/store/useUser";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { saveToken } from "@/app/actions";
 
 const LoginComponent = () => {
-  const [user, setUser] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  const { setUser } = useUser();
+  const router = useRouter();
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
       const res = await fetch("/api/login", {
         method: "POST",
         body: JSON.stringify({
-          name: user,
+          name: username,
           password,
         }),
         headers: {
@@ -22,7 +26,10 @@ const LoginComponent = () => {
       if (!res.ok) {
         throw new Error(data.error);
       }
-      console.log(data);
+
+      setUser({ name: data.name, role: data.role });
+      await saveToken(data.token);
+      router.push("/");
     } catch (error) {
       console.log(error);
     }
@@ -41,12 +48,12 @@ const LoginComponent = () => {
           <div className="rounded-md shadow-sm">
             <div>
               <input
-                aria-label="User"
-                name="user"
-                type="user"
+                aria-label="username"
+                name="username"
+                type="username"
                 required
-                value={user}
-                onChange={(e) => setUser(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-blue focus:border-blue-300 focus:z-10 sm:text-sm sm:leading-5"
                 placeholder="Username"
               />
