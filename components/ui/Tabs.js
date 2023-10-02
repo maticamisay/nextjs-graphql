@@ -6,42 +6,42 @@ import { useSelectedLayoutSegment } from "next/navigation";
 function TabsWrapper({ children }) {
   const urlSegment = useSelectedLayoutSegment();
 
-  const activeTab =
-    urlSegment === "usuarios"
-      ? "usuarios"
-      : urlSegment === null
-      ? "inicio"
-      : "__DEFAULT__";
+  const tabMapping = {
+    usuarios: "usuarios",
+    null: "inicio",
+    tipsofday: "tipsofday",
+  };
+  const activeTab = tabMapping[urlSegment] || "__DEFAULT__";
   if (urlSegment === "login") return children;
   return (
     <div className="bg-gray-100 p-4">
-      <ul className="flex border-b">
-        <li className="-mb-px mr-2">
+      <ul className="flex flex-col sm:flex-row border-b space-y-2 sm:space-y-0 sm:space-x-2">
+        <li>
           <Link
             href="/"
             className={`py-2 px-4 inline-block ${
               activeTab === "inicio" ? "border-b-2 border-blue-500" : ""
-            }`}
+            } hover:bg-blue-100 rounded transition ease-in-out duration-150`}
           >
             Inicio
           </Link>
         </li>
-        <li className="-mb-px mr-2">
+        <li>
           <Link
             href="/usuarios"
             className={`py-2 px-4 inline-block ${
               activeTab === "usuarios" ? "border-b-2 border-blue-500" : ""
-            }`}
+            } hover:bg-blue-100 rounded transition ease-in-out duration-150`}
           >
             Usuarios
           </Link>
         </li>
-        <li className="-mb-px mr-2">
+        <li>
           <Link
-            href="/tipofday"
+            href="/tipsofday"
             className={`py-2 px-4 inline-block ${
-              activeTab === "tipofday" ? "border-b-2 border-blue-500" : ""
-            }`}
+              activeTab === "tipsofday" ? "border-b-2 border-blue-500" : ""
+            } hover:bg-blue-100 rounded transition ease-in-out duration-150`}
           >
             Consejo del día
           </Link>

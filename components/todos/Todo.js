@@ -2,44 +2,73 @@ import React, { useState } from "react";
 import Dropdown from "../ui/Dropdown";
 import { SlOptions } from "react-icons/sl";
 import useEditTodo from "@/store/useEditTodo";
-import { revalidatePathServer } from "@/app/actions";
+import { getToken, revalidatePathServer } from "@/app/actions";
+import useUser from "@/store/useUser";
+import { Role } from "@/lib/constants";
+import { toast } from "react-toastify";
 
 const Todo = ({ todo }) => {
-  const [showMenu, setShowMenu] = useState(false);
   const { setTodo } = useEditTodo();
+  const { user } = useUser();
 
   const handleComplete = async () => {
-    await fetch(`/api/todos`, {
-      method: "PUT",
-      body: JSON.stringify({
-        id: todo.id,
-        completed: !todo.completed,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    revalidatePathServer("/");
+    try {
+      const token = await getToken();
+      const res = await fetch(`/api/todos`, {
+        method: "PUT",
+        body: JSON.stringify({
+          id: todo.id,
+          completed: !todo.completed,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok || data.name === "ApolloError") {
+        throw new Error("Error al completar el todo");
+      }
+      revalidatePathServer("/");
+      toast.success("Todo completado con éxito");
+    } catch (error) {
+      console.log(error);
+      toast.error("Error al completar el todo");
+    }
   };
 
   const handleDelete = async () => {
-    await fetch(`/api/todos`, {
-      method: "DELETE",
-      body: JSON.stringify({
-        id: todo.id,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    revalidatePathServer("/");
+    try {
+      const token = await getToken();
+      const res = await fetch(`/api/todos`, {
+        method: "DELETE",
+        body: JSON.stringify({
+          id: todo.id,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok || data.name === "ApolloError") {
+        throw new Error("Error al completar el todo");
+      }
+      toast.success("Todo eliminado con éxito");
+      revalidatePathServer("/");
+    } catch (error) {
+      console.log(error);
+      toast.error("Error al eliminar el todo");
+    }
   };
   const renderButton = todo.completed;
+  const renderDropdown =
+    user.name === todo.userId.name || user.role === Role.ADMIN;
   return (
-    <li className="relative border-b last:border-b-0 p-2 flex justify-between items-center">
+    <li className="relative border-b last:border-b-0 p-4 flex justify-between items-center hover:bg-gray-50 transition duration-300">
       <div>
-        <p className="font-medium">{todo.title}</p>
-        <small className="text-gray-500">Creado por: {todo.userId.name}</small>
+        <p className="font-semibold mb-1">{todo.title}</p>
+        <small className="text-gray-600">Creado por: {todo.userId.name}</small>
       </div>
       <div className="flex items-center gap-3">
         <span
@@ -52,56 +81,39 @@ const Todo = ({ todo }) => {
           {todo.completed ? "Completado" : "Pendiente"}
         </span>
 
-        <Dropdown icon={<SlOptions />}>
-          {!renderButton && (
-            <button
-              className="text-left text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-2 py-1 rounded-md"
-              onClick={handleComplete}
-            >
-              Completar
-            </button>
-          )}
-          {!renderButton && (
-            <button
-              className="text-left text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-2 py-1 rounded-md"
-              onClick={() =>
-                setTodo({
-                  id: todo.id,
-                  title: todo.title,
-                  completed: todo.completed,
-                  userId: todo.userId.id,
-                })
-              }
-            >
-              Editar
-            </button>
-          )}
-          <button
-            className="text-left text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-2 py-1 rounded-md"
-            onClick={handleDelete}
-          >
-            Eliminar
-          </button>
-        </Dropdown>
-        {showMenu && (
-          <ul className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-lg">
-            <li className="border-b last:border-b-0">
-              <button className="block w-full px-4 py-2 text-left hover:bg-gray-200">
+        {renderDropdown ? (
+          <Dropdown icon={<SlOptions />}>
+            {!renderButton && (
+              <button
+                className="text-left text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-2 py-1 rounded-md"
+                onClick={handleComplete}
+              >
+                Completar
+              </button>
+            )}
+            {!renderButton && (
+              <button
+                className="text-left text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-2 py-1 rounded-md"
+                onClick={() =>
+                  setTodo({
+                    id: todo.id,
+                    title: todo.title,
+                    completed: todo.completed,
+                    userId: todo.userId.id,
+                  })
+                }
+              >
                 Editar
               </button>
-            </li>
-            <li className="border-b last:border-b-0">
-              <button className="block w-full px-4 py-2 text-left hover:bg-gray-200">
-                Otra Acción
-              </button>
-            </li>
-            <li>
-              <button className="block w-full px-4 py-2 text-left hover:bg-gray-200">
-                Eliminar
-              </button>
-            </li>
-          </ul>
-        )}
+            )}
+            <button
+              className="text-left text-gray-600 hover:text-gray-900 hover:bg-gray-100 px-2 py-1 rounded-md"
+              onClick={handleDelete}
+            >
+              Eliminar
+            </button>
+          </Dropdown>
+        ) : null}
       </div>
     </li>
   );

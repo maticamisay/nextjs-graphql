@@ -10,6 +10,7 @@ export async function POST(request) {
       mutation: CREATE_USER,
       variables: {
         name: newUser.name,
+        password: newUser.password,
       },
     });
     const createUser = res.data.createUser;
@@ -17,7 +18,10 @@ export async function POST(request) {
       user: createUser,
     });
   } catch (error) {
-    return NextResponse.json(error);
+    return NextResponse.json(
+      { error: error.message },
+      { status: error.networkError?.statusCode || 500 }
+    );
   }
 }
 
@@ -36,6 +40,9 @@ export async function DELETE(request) {
       deleteUser,
     });
   } catch (error) {
-    return NextResponse.json(error);
+    return NextResponse.json(
+      { error: error.message },
+      { status: error.networkError?.statusCode || 500 }
+    );
   }
 }

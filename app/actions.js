@@ -21,3 +21,7 @@ export const saveToken = (token) => {
 export const getToken = () => {
   return cookies().get("tokenTodo")?.value;
 };
+
+export const clearToken = () => {
+  cookies().delete("tokenTodo");
+};

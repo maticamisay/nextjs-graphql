@@ -1,19 +1,24 @@
 import React from "react";
-import Link from "next/link";
 import useUser from "@/store/useUser";
+import { clearToken } from "@/app/actions";
 
 const LoggedButtons = () => {
-  const { user } = useUser();
+  const { user, clearUser } = useUser();
+
+  const handleLogout = () => {
+    clearUser();
+    clearToken();
+  };
   return (
     <>
       <div className="flex items-center">
         <span className="text-white mr-2">Hola, {user.name}</span>
-        <Link
-          href="/logout"
+        <button
           className="text-white no-underline hover:underline hover:text-gray-200 ml-4"
+          onClick={handleLogout}
         >
           Cerrar sesión
-        </Link>
+        </button>
       </div>
     </>
   );

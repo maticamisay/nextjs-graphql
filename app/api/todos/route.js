@@ -5,20 +5,13 @@ import {
   DELETE_TODO,
   UPDATE_TODO,
 } from "@/graphql/mutations/todos";
-
-export async function GET() {
-  console.log("GET request received");
-  return NextResponse.json({
-    hola: "hola",
-  });
-}
+import { headers } from "next/headers";
 
 export async function POST(request) {
   try {
     const newTodo = await request.json();
-    const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTE3NTg5MTYxMzRhOWM3ZWQzZGJiYzgiLCJuYW1lIjoibWF0aSIsImlhdCI6MTY5NjE3Mjg3MiwiZXhwIjoxNjk2MTc2NDcyfQ.EIChRwp4ceVmy-TDixvvlpLVkcH29TvaK9bT6A7h8vE";
-
+    const useHeader = headers(Request);
+    const token = useHeader.get("authorization").split(" ")[1];
     const client = getClient();
     const res = await client.mutate({
       mutation: CREATE_TODO,
@@ -45,6 +38,8 @@ export async function POST(request) {
 export async function PUT(request) {
   try {
     const todo = await request.json();
+    const useHeader = headers(Request);
+    const token = useHeader.get("authorization").split(" ")[1];
     const client = getClient();
     const res = await client.mutate({
       mutation: UPDATE_TODO,
@@ -54,24 +49,37 @@ export async function PUT(request) {
         completed: todo.completed,
         userId: todo.userId,
       },
+      context: {
+        token: token,
+      },
     });
     const updateTodo = res.data.updateTodo;
     return NextResponse.json({
       updateTodo,
     });
   } catch (error) {
-    return NextResponse.json(error);
+    // console.log(error.networkError.result.errors.map((e) => e.message));
+    console.log(error);
+    return NextResponse.json(
+      { error: error.message },
+      { status: error.networkError?.statusCode || 500 }
+    );
   }
 }
 
 export async function DELETE(request) {
   try {
     const todo = await request.json();
+    const useHeader = headers(Request);
+    const token = useHeader.get("authorization").split(" ")[1];
     const client = getClient();
     const res = await client.mutate({
       mutation: DELETE_TODO,
       variables: {
         id: todo.id,
+      },
+      context: {
+        token: token,
       },
     });
     const deleteTodo = res.data.deleteTodo;
@@ -79,6 +87,9 @@ export async function DELETE(request) {
       deleteTodo,
     });
   } catch (error) {
-    return NextResponse.json(error);
+    return NextResponse.json(
+      { error: error.message },
+      { status: error.networkError?.statusCode || 500 }
+    );
   }
 }

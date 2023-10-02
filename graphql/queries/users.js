@@ -5,6 +5,7 @@ export const GET_USERS_WITH_TODOS_COUNT = gql`
     users {
       id
       name
+      role
       todosCount
     }
   }

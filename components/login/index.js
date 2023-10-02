@@ -3,6 +3,7 @@ import useUser from "@/store/useUser";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { saveToken } from "@/app/actions";
+import { toast } from "react-toastify";
 
 const LoginComponent = () => {
   const [username, setUsername] = useState("");
@@ -23,15 +24,18 @@ const LoginComponent = () => {
         },
       });
       const data = await res.json();
-      if (!res.ok) {
-        throw new Error(data.error);
+      if (!res.ok || data.name === "ApolloError") {
+        throw new Error(data.message);
       }
-
+      toast.success("Sesión iniciada correctamente");
       setUser({ name: data.name, role: data.role });
       await saveToken(data.token);
       router.push("/");
     } catch (error) {
       console.log(error);
+      setUsername("");
+      setPassword("");
+      toast.error("Error al iniciar sesión");
     }
   };
 
