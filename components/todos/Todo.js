@@ -65,12 +65,12 @@ const Todo = ({ todo }) => {
   const renderDropdown =
     user.name === todo.userId.name || user.role === Role.ADMIN;
   return (
-    <li className="relative border-b last:border-b-0 p-4 flex justify-between items-center hover:bg-gray-50 transition duration-300">
-      <div>
+    <li className="relative border-b last:border-b-0 p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center hover:bg-gray-50 transition duration-300">
+      <div className="order-2 sm:order-1">
         <p className="font-semibold mb-1">{todo.title}</p>
         <small className="text-gray-600">Creado por: {todo.userId.name}</small>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 order-1 sm:order-2">
         <span
           className={`px-3 py-1 rounded-full text-sm ${
             todo.completed
